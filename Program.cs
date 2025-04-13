@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System;
+using System.Net.NetworkInformation;
 
 namespace AirlineReservationConsoleSystem
 {
@@ -65,20 +66,16 @@ namespace AirlineReservationConsoleSystem
             Console.Write("Enter flight code to search: ");
             string SearchCode = Console.ReadLine().ToLower();
 
-            bool IsFound = false;
             for (int i = 0; i < FlightCount; i++)
             {
                 if (FlightCode[i].ToLower()== SearchCode && ProgramContinue[i])
                 {
                     Console.WriteLine($"Flight code: {FlightCode[i]}, From: {FromCity[i]}, To: {ToCity[i]}, Duration: {Duration[i]}, Departure Time: {DepartureTime[i]} ");
-                    IsFound = true;
+                   
                 }
             }
-
-            if (!IsFound)
-            {
                 Console.WriteLine("Flight Not found ");
-            }
+            
         }
 
         public static void UpdateFlightDeparture(ref DateTime departure)
@@ -86,10 +83,30 @@ namespace AirlineReservationConsoleSystem
 
         }
 
-        // public static void CancelFlightBooking(out string passengerName)
-        // {
+         public static void CancelFlightBooking(out string passengerName)
+        {
+            Console.Write("Enter flight code to cancel: ");
+            string code = Console.ReadLine().ToLower();
+            passengerName = ""; 
 
-        // }
+            bool isFound = false;
+
+            for (int i = 0; i < FlightCount; i++)
+            {
+                if (FlightCode[i].ToLower() == code && ProgramContinue[i])
+                {
+                    ProgramContinue[i] = false;   
+                    Console.WriteLine($"Booking for {passengerName} on flight {FlightCode[i]} has been cancelled.");
+                    isFound = true;
+                    break;
+                }
+            }
+
+            if (!isFound)
+            {
+                Console.WriteLine("Flight not found or already cancelled.");
+            }
+        }
 
         public static void printValue(string input)
         {
@@ -138,17 +155,19 @@ namespace AirlineReservationConsoleSystem
                         break;
 
                     case 3:
-                    Console.WriteLine("Find Flight By Code: Enter flight code to search:");
-                    string code = Console.ReadLine();
-                    string result = FindFlightByCode(code); 
-                    printValue(result);
+                         Console.WriteLine("Find Flight By Code: Enter flight code to search:");
+                         FindFlightByCode(string code); 
                     break;
 
                     case 4:
-                        break;
+                    
+                    break;
 
                     case 5:
-                        break;
+                    Console.WriteLine("cancle flight:");
+                    CancelFlightBooking(out string passengerName);
+
+                    break;
 
                     default:
 
