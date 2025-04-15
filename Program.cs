@@ -201,91 +201,57 @@ namespace AirlineReservationConsoleSystem
 
             DisplayWelcomeMessage();
 
-            Console.WriteLine(" choose a process \n \n 1.AddFlight  \n 2.Display All Flights  \n 3.Find Flight By Code \n 4.Update Flight Departure \n 5.Cancel Flight Booking \n 6.Book Flight \n 7.Validate Flight Code \n 8.Generate Booking ID \n 9.Display Flight Details \n 10.Search Bookings By Destination \n 11.EXIT");
-            int choice =  ShowMainMenu(); ;
+            while (true)
+            {
+                int choice = ShowMainMenu(); ;
 
-            bool ProgramContinue = true;
- 
                 switch (choice)
                 {
                     case 1:
 
-                        char ChoiceChar = 'y';
-                        bool AddMore = true;
+                        Console.WriteLine("Enter flight code");
+                        string flightCode = Console.ReadLine();
+
+                        Console.WriteLine("Enter from City");
+                        string fromCity = Console.ReadLine();
+
+                        Console.WriteLine("Enter to City");
+                        string toCity = Console.ReadLine();
+
                         
-                        do
-                        {
-                            Console.WriteLine("Enter flight code");
-                            string flightCode = Console.ReadLine();
+                        Console.Write("Departure Time (yyyy-mm-dd hh:mm): ");
+                        DateTime departureTime = DateTime.Parse(Console.ReadLine());
 
-                            Console.WriteLine("Enter from City");
-                            string fromCity = Console.ReadLine();
+                        Console.Write("Duration (in hourse): ");
+                        int duration = int.Parse(Console.ReadLine());
 
-                            Console.WriteLine("Enter to City");
-                            string toCity = Console.ReadLine();
-
-                            DateTime departureTime = DateTime.Now;
-
-                            Console.WriteLine("Enter duration");
-                            int duration = int.Parse(Console.ReadLine());
-
-                        bool IsValid = false;
-                        for (int i = 0; i < FlightCount; i++)
-                            {
-                                if (FlightCode[i] == flightCode)
-                                {
-                                    Console.WriteLine("flight code is already exist");
-                                     IsValid = false;
-                                      break;
-                                }
-                                
-                            }
-                            if (!IsValid)
-                            {
-                                AddFlight(flightCode, fromCity, toCity, departureTime, duration);
-                                Console.WriteLine("Flight is saved ");
-                                FlightCount++;
-
-                            }
-                            else
-                            {
-                                Console.WriteLine("Flight dose not saved ");
-                            }
-                            Console.WriteLine("Do you want add another people? y / n");
-                            ChoiceChar = Console.ReadKey().KeyChar;
-                            Console.WriteLine();
-
-                            if (ChoiceChar == 'y' || ChoiceChar == 'Y')
-                            {
-                                AddMore = true;
-                            }
-                            else
-                            {
-                                AddMore = false;
-                                
-                            }
-                        }
-                        while (AddMore && FlightCount < MaxFlight);
-
-                    break;
+                        AddFlight(flightCode, fromCity, toCity, departureTime, duration);
+                        Console.WriteLine("Flight is saved ");
+                         break;
+            
 
                     case 2:
 
-                        Console.WriteLine("flight Details:");
-                        DisplayAllFlights( );
-                        break;
+                    Console.WriteLine("flight Details:");
+                    DisplayAllFlights();
+                    break;
 
                     case 3:
-                         Console.WriteLine("Find Flight By Code: Enter flight code to search:");
-                         
+                    Console.WriteLine("Find Flight By Code: Enter flight code to search:");
+
                     break;
 
-                    case 4:
+                case 4:
 
-                 
+                    Console.Write("Enter flight code to update: ");
+                    string UpdateCode = Console.ReadLine();
+                    Console.Write("Enter new departure time (yyyy-mm-dd hh:mm): ");
+                    DateTime NewDepartureTime = DateTime.Parse(Console.ReadLine());
+                    UpdateFlightDeparture(ref NewDepartureTime);
+
                     break;
 
-                    case 5:
+                case 5:
 
                     Console.Write("Enter passenger name to cancel booking: ");
                     string passengerNameToCancel = null;
@@ -294,25 +260,25 @@ namespace AirlineReservationConsoleSystem
 
                     break;
 
-                    case 6:
+                case 6:
 
-                    
 
-                    break;
-
-                    case 7:
-
-                  
 
                     break;
 
-                    case 8:
+                case 7:
 
-                    
+
 
                     break;
- 
-                    case 9:
+
+                case 8:
+
+
+
+                    break;
+
+                case 9:
 
                     Console.Write("Enter flight code: ");
                     string Code = Console.ReadLine();
@@ -321,7 +287,7 @@ namespace AirlineReservationConsoleSystem
 
                     break;
 
-                    case 10:
+                case 10:
 
                     Console.Write("Enter destination city: ");
                     string City = Console.ReadLine();
@@ -329,20 +295,21 @@ namespace AirlineReservationConsoleSystem
 
                     break;
 
-                    case 11:
+                case 11:
 
                     ExitApplication();
 
                     break;
 
-                    default:
+                default:
                     Console.WriteLine("Invalid choice! Try again.");
                     break;
                 }
-                while (ProgramContinue != false) ;
-            
-        }
+            }
 
+            Console.WriteLine();
+        
+        }
     }
 }
 
