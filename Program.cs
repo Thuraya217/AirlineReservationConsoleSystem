@@ -1,52 +1,91 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using System.Net.NetworkInformation;
+using System.Threading.Channels;
 
 namespace AirlineReservationConsoleSystem
 {
     internal class Program
     {
-        
+        static int MaxFlight = 10;
         static string[] FlightCode = new string[10];
         static string[] FromCity = new string[10];
         static string[] ToCity = new string[10];
         static int[] Duration = new int[10];
         static DateTime[] DepartureTime = new DateTime[10];
         static bool[] ProgramContinue = new bool[10];
-        static int MaxFlight = 10;
         static int FlightCount = 0;
 
+        //booking 
+        static int MaxBooking = 10;
+        static string[] passengerNames = new string[10];
+        static string[] bookingIDs = new string[10];
+        static int[] basePrice = new int[10];
+        static string[] BookedFlightCodes = new string[10];
+
+        static int bookingCount = 0;
+
+
+        static void DisplayWelcomeMessage()
+        {
+
+            Console.WriteLine("Welcome to Airline System");
+
+        }
+
+        static void Main(string[] args)
+        {
+            StartSystem();
+        }
+
+        static int ShowMainMenu()
+        {
+
+            Console.WriteLine("Main Menu");
+            Console.WriteLine("choose a process");
+            Console.WriteLine("1. AddFlight");
+            Console.WriteLine("2. Display All Flights");
+            Console.WriteLine("3. Find Flight By Code");
+            Console.WriteLine("4. Update Flight Departure");
+            Console.WriteLine("5. Cancel Flight Booking");
+            Console.WriteLine("6. Book Flight");
+            Console.WriteLine("7. Validate Flight Code");
+            Console.WriteLine("8. Generate Booking ID");
+            Console.WriteLine("9. Display Flight Details"); 
+            Console.WriteLine("10. Search Bookings By Destination");
+            Console.WriteLine("11. Exit");
+
+            int input = int.Parse(Console.ReadLine());
+            Console.Clear();
+
+            return input;
+        }
+
+        static void ExitApplication()
+        {
+            Console.WriteLine("Thank you for using the Airline System");
+            return;
+        }
 
         public static void AddFlight(string flightCode, string fromCity, string toCity, DateTime departureTime, int duration)
         {
-            char ChoiceChar = 'y';
-            do
+            if (FlightCount < 100)
             {
-                if (FlightCount < MaxFlight)
-                {
-                    FlightCode[FlightCount] = flightCode;
-                    FromCity[FlightCount] = fromCity;
-                    ToCity[FlightCount] = toCity;
-                    Duration[FlightCount] = duration;
-                    DepartureTime[FlightCount] = departureTime;
-                    ProgramContinue[FlightCount] = true;
-
-                    FlightCount++;
-                    Console.WriteLine("Added Successfully");
-                }
-                else
-                {
-                    Console.WriteLine("Cannot add more people. Maximum limit reached");
-                    break;
-                }
-
-                Console.WriteLine("Do you want add another people? y / n");
-                ChoiceChar = Console.ReadKey().KeyChar;
-                Console.WriteLine();
+                FlightCode[FlightCount] = flightCode;
+                FromCity[FlightCount] = fromCity;
+                ToCity[FlightCount] = toCity;
+                Duration[FlightCount] = duration;
+                DepartureTime[FlightCount] = departureTime;
+                ProgramContinue[FlightCount] = true;
+                FlightCount++;
+                Console.WriteLine("Flight added successfully.");
             }
-            while (ChoiceChar != 'y' && ChoiceChar != 'Y');
-            
-        }
-
+            else
+            {
+                Console.WriteLine("There is not space for add more flight ");
+            }
+        }            
+        
         public static void DisplayAllFlights()
         {
             if (FlightCount == 0)
@@ -61,33 +100,44 @@ namespace AirlineReservationConsoleSystem
             }
         }
 
-        public static void FindFlightByCode(string code)
+        public static bool FindFlightByCode(string code)
         {
             Console.Write("Enter flight code to search: ");
             string SearchCode = Console.ReadLine().ToLower();
 
             for (int i = 0; i < FlightCount; i++)
             {
-                if (FlightCode[i].ToLower()== SearchCode && ProgramContinue[i])
+                if (FlightCode[i].ToLower() == SearchCode)
                 {
                     Console.WriteLine($"Flight code: {FlightCode[i]}, From: {FromCity[i]}, To: {ToCity[i]}, Duration: {Duration[i]}, Departure Time: {DepartureTime[i]} ");
-                   
+                    return true;   
                 }
-            }
-                Console.WriteLine("Flight Not found ");
-            
+            }    
+            return false;
+            Console.WriteLine("Flight Not found ");   
         }
 
         public static void UpdateFlightDeparture(ref DateTime departure)
         {
-
+            Console.WriteLine("Enter flight code to update: ");
+            string flightCode = Console.ReadLine();
+            for (int i = 0; i < FlightCount; i++)
+            {
+                if (FlightCode[i] == flightCode)
+                {
+                    DepartureTime[i] = departure;
+                    Console.WriteLine("Flight departure updated successfully.");
+                    return;
+                }
+            }
+            Console.WriteLine("Flight not found.");
         }
 
-         public static void CancelFlightBooking(out string passengerName)
+        public static void CancelFlightBooking(out string passengerName)
         {
             Console.Write("Enter flight code to cancel: ");
             string code = Console.ReadLine().ToLower();
-            passengerName = ""; 
+            passengerName = "";
 
             bool isFound = false;
 
@@ -95,34 +145,64 @@ namespace AirlineReservationConsoleSystem
             {
                 if (FlightCode[i].ToLower() == code && ProgramContinue[i])
                 {
-                    ProgramContinue[i] = false;   
+                    ProgramContinue[i] = false;
                     Console.WriteLine($"Booking for {passengerName} on flight {FlightCode[i]} has been cancelled.");
                     isFound = true;
                     break;
                 }
             }
-
             if (!isFound)
             {
                 Console.WriteLine("Flight not found or already cancelled.");
             }
         }
 
-        public static void printValue(string input)
+        static string BookFlight(string passengerName, string flightCode = "Default001")
         {
-            Console.WriteLine("the result of this operation is: " + input);
-        }
-
-        public static void ExitApp(ref bool flag)
-        {
-            flag = false;
 
         }
 
-        static void Main(string[] args)
+        static bool ValidateFlightCode(string flightCode)
         {
-            Console.WriteLine("welcome to airline menu \n \n choose a process \n 1.AddFlight  \n 2.Display All Flights  \n 3.Find Flight By Code \n 4.Update Flight Departure \n 5.Cancel Flight Booking ");
-            int choice = int.Parse(Console.ReadLine());
+
+        }
+        static string GenerateBookingID(string passengerName)
+        {
+
+        }
+
+        static void DisplayFlightDetails(string code)
+        {
+
+        }
+
+        static void SearchBookingsByDestination(string toCity)
+        {
+
+        }
+
+        static bool ConfirmAction(string action)
+
+        {
+            {
+                Console.Write($"Are you sure you want to {action}? (y/n): ");
+                string input = Console.ReadLine().ToLower();
+                while (input != "y" && input != "n")
+                {
+                    Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                    input = Console.ReadLine().ToLower();
+                }
+                return input == "y";
+            }
+        }
+
+        static void StartSystem()
+        {
+
+            DisplayWelcomeMessage();
+
+            Console.WriteLine(" choose a process \n \n 1.AddFlight  \n 2.Display All Flights  \n 3.Find Flight By Code \n 4.Update Flight Departure \n 5.Cancel Flight Booking \n 6.Book Flight \n 7.Validate Flight Code \n 8.Generate Booking ID \n 9.Display Flight Details \n 10.Search Bookings By Destination \n 11.EXIT");
+            int choice =  ShowMainMenu(); ;
 
             bool ProgramContinue = true;
  
@@ -130,23 +210,64 @@ namespace AirlineReservationConsoleSystem
                 {
                     case 1:
 
-                        Console.WriteLine("Enter flight code");
-                        string flightCode = Console.ReadLine();
+                        char ChoiceChar = 'y';
+                        bool AddMore = true;
+                        
+                        do
+                        {
+                            Console.WriteLine("Enter flight code");
+                            string flightCode = Console.ReadLine();
 
-                        Console.WriteLine("Enter from City");
-                        string fromCity = Console.ReadLine();
+                            Console.WriteLine("Enter from City");
+                            string fromCity = Console.ReadLine();
 
-                        Console.WriteLine("Enter to City");
-                        string toCity = Console.ReadLine();
- 
-                        DateTime departureTime = DateTime.Now;
+                            Console.WriteLine("Enter to City");
+                            string toCity = Console.ReadLine();
 
-                        Console.WriteLine("Enter duration");
-                        int duration = int.Parse(Console.ReadLine());
+                            DateTime departureTime = DateTime.Now;
 
-                        AddFlight(flightCode, fromCity, toCity, departureTime, duration); 
-                        break;
+                            Console.WriteLine("Enter duration");
+                            int duration = int.Parse(Console.ReadLine());
 
+                        bool IsValid = false;
+                        for (int i = 0; i < FlightCount; i++)
+                            {
+                                if (FlightCode[i] == flightCode)
+                                {
+                                    Console.WriteLine("flight code is already exist");
+                                     IsValid = false;
+                                      break;
+                                }
+                                
+                            }
+                            if (!IsValid)
+                            {
+                                AddFlight(flightCode, fromCity, toCity, departureTime, duration);
+                                Console.WriteLine("Flight is saved ");
+                                FlightCount++;
+
+                            }
+                            else
+                            {
+                                Console.WriteLine("Flight dose not saved ");
+                            }
+                            Console.WriteLine("Do you want add another people? y / n");
+                            ChoiceChar = Console.ReadKey().KeyChar;
+                            Console.WriteLine();
+
+                            if (ChoiceChar == 'y' || ChoiceChar == 'Y')
+                            {
+                                AddMore = true;
+                            }
+                            else
+                            {
+                                AddMore = false;
+                                
+                            }
+                        }
+                        while (AddMore && FlightCount < MaxFlight);
+
+                    break;
 
                     case 2:
 
@@ -156,26 +277,72 @@ namespace AirlineReservationConsoleSystem
 
                     case 3:
                          Console.WriteLine("Find Flight By Code: Enter flight code to search:");
-                         FindFlightByCode(string code); 
+                         
                     break;
 
                     case 4:
-                    
+
+                 
                     break;
 
                     case 5:
-                    Console.WriteLine("cancle flight:");
-                    CancelFlightBooking(out string passengerName);
+
+                    Console.Write("Enter passenger name to cancel booking: ");
+                    string passengerNameToCancel = null;
+                    passengerNameToCancel = Console.ReadLine();
+                    CancelFlightBooking(out passengerNameToCancel);
+
+                    break;
+
+                    case 6:
+
+                    
+
+                    break;
+
+                    case 7:
+
+                  
+
+                    break;
+
+                    case 8:
+
+                    
+
+                    break;
+ 
+                    case 9:
+
+                    Console.Write("Enter flight code: ");
+                    string Code = Console.ReadLine();
+                    DisplayFlightDetails(Code);
+                    break;
+
+                    break;
+
+                    case 10:
+
+                    Console.Write("Enter destination city: ");
+                    string City = Console.ReadLine();
+                    SearchBookingsByDestination(City);
+
+                    break;
+
+                    case 11:
+
+                    ExitApplication();
 
                     break;
 
                     default:
-
-                        break;
+                    Console.WriteLine("Invalid choice! Try again.");
+                    break;
                 }
                 while (ProgramContinue != false) ;
             
         }
+
     }
 }
 
